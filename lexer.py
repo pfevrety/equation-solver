@@ -61,8 +61,6 @@ class Lexer:
             number_str += self.current_char
             self.advance()
 
-        print(number_str)
-
         if number_str.endswith('x'):
             number_str += number_str + "x"
 

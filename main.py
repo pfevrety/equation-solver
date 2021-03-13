@@ -1,9 +1,11 @@
 ######## IMPORT ##########
 from lexer import Lexer
 from parser_ import Parser
+from interpreter import Interpreter
+
 ######## GET EQUATIONS #########
 print('Equation du premier degré.')
-equation = "(x5 + 6) * 7 * 7 + 48 = -(2*3) * 36" ##list(str(input("Entrez votre équation >")).replace(' ', ''))
+equation = "(5 + 6) * 7 * 7 + 48 = (5 * (2*3)) * 36" ##list(str(input("Entrez votre équation >")).replace(' ', ''))
 print(f"L'équation entré est > {equation}")
 possible_characters = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "x", "=", "+", "-", "/", "*", " ", ".", "(", ")"]
 
@@ -39,10 +41,14 @@ lexer = Lexer(str(''.join(equation_part1)))
 tokens = lexer.generate_tokens()
 parser = Parser(tokens)
 tree = parser.parse()
-print(f"La Premiere partie de l'équation avec les priorités {tree}")
+interpreter = Interpreter()
+value = interpreter.visit(tree)
 
 lexer2 = Lexer(str(''.join(equation_part2)))
 tokens2 = lexer2.generate_tokens()
 parser2 = Parser(tokens2)
 tree2 = parser2.parse()
-print(f"La Deuxieme partie de l'équation avec les priorités {tree2}")
+
+interpreter = Interpreter()
+value2 = interpreter.visit(tree2)
+print(f'{value} = {value2}')

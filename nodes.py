@@ -9,6 +9,13 @@ class NumberNode():
         return f"{self.value}"
 
 @dataclass
+class AlgebricNode():
+    value: str
+
+    def __repr__(self):
+        return f"{self.value}"
+
+@dataclass
 class AddNode():
     node_a: any
     node_b: any

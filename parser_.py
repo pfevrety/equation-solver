@@ -1,6 +1,8 @@
 from tokens import TokenType
 from nodes import *
 
+trans = list()
+
 class Parser:
     def __init__(self, tokens):
         self.tokens = iter(tokens)
@@ -19,10 +21,8 @@ class Parser:
         if self.current_token == None:
             return None
         result = self.expr()
-
         if self.current_token != None:
             self.raise_error()
-
         return result
 
     def expr(self):
@@ -35,6 +35,8 @@ class Parser:
             elif self.current_token.type == TokenType.MINUS:
                 self.advance()
                 result = SubtractNode(result, self.term())
+        print(result)
+        
 
         return result
 
@@ -68,7 +70,7 @@ class Parser:
             return NumberNode(token.value)
         elif token.type == TokenType.ALG:
             self.advance()
-            return NumberNode(token.value)
+            return AlgebricNode(token.value)
 
         elif token.type == TokenType.PLUS:
             self.advance()
