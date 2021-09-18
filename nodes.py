@@ -7,6 +7,17 @@ class NumberNode:
     def __repr__(self):
         return f'{self.value}'
 
+# literal node
+@dataclass
+class LiteralNode:
+    value: list
+
+    def __repr__(self):
+        if self.value[0] == None:
+            return f'{self.value[1]}x'
+        else:
+            return f'({self.value[0]} + {self.value[1]}x)'
+
 @dataclass
 class AddNode:
     node_a: any
