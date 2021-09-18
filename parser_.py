@@ -50,7 +50,6 @@ class Parser:
             elif self.current_token.type == TokenType.DIVIDE:
                 self.advance()
                 result = DivideNode(result, self.factor())
-
         return result
 
     def factor(self):
