@@ -8,7 +8,7 @@ class TokenType(Enum):
     DIVIDE = 4
     LPAREN = 5
     RPAREN = 6
-    # LITERAL = 7
+    LITERAL = 7
 
 
 @dataclass
@@ -17,4 +17,4 @@ class Token:
 	value: any = None
 
 	def __repr__(self):
-		return self.type.name + (f":{self.value}" if self.value != None else "")
+		return self.type.name + '.' + str(self.type.value) + (f" : {self.value}" if self.value != None else "")
