@@ -45,7 +45,7 @@ class Lexer:
     def generate_number(self):
         if self.current_char == 'x':
             self.advance()
-            return Token(TokenType.LITERAL, [None, 1])
+            return Token(TokenType.LITERAL, [None, 1.0])
 
         decimal_point_count = 0
         number_str = self.current_char
@@ -61,7 +61,7 @@ class Lexer:
                 self.advance()
                 if self.current_char != None and (self.current_char == '.' or self.current_char == 'x' or self.current_char in DIGITS):
                     raise Exception(f"Illegal character '{number_str}x{self.current_char}'")
-                return Token(TokenType.LITERAL, [None, int(number_str)])
+                return Token(TokenType.LITERAL, [None, float(number_str)])
 
             number_str += self.current_char
             self.advance()
