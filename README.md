@@ -1,1 +1,0 @@
-equation solver
