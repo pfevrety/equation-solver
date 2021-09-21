@@ -98,6 +98,22 @@ class Interpreter:
         return Number(self.visit(node.node_a).value - self.visit(node.node_b).value)
 
     def visit_MultiplyNode(self, node):
+        node_a = self.visit(node.node_a)
+        node_b = self.visit(node.node_b)
+        tmp = [None, None]
+
+        if node_a.type() == "LITERAL" and node_b.type() == "LITERAL":
+            if node_a.value[0] != None and node_a.value[1] != None and node_a.value[2] != None and node_b.value[0] != None and node_b.value[1] != None and node_b.value[2] != None:
+                tmp[0] = node_a.value[0] * node_b.value[0]
+                tmp[1] = node_a.value[1] * node_b.value[0] + node_a.value[0] * \
+                    node_b.value[1] + node_a.value[1] * node_b.value[1]
+                tmp[0] = node_a.value[2] * node_b.value[0] + node_a.value[2] * node_b.value[1] + \
+                    node_a.value[0] * node_b.value[2] + \
+                    node_a.value[1] * node_b.value[2]
+                tmp.append(node_a.value[2] * node_b.value[2])
+
+                return Literal(tmp)
+                
         return Number(self.visit(node.node_a).value - self.visit(node.node_b).value)
 
     def visit_DivideNode(self, node):
