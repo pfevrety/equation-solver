@@ -113,7 +113,29 @@ class Interpreter:
                 tmp.append(node_a.value[2] * node_b.value[2])
 
                 return Literal(tmp)
+
+        if node_a.type() == "LITERAL":
+            if node_a.value[0] != None and node_a.value[1] != None and node_a.value[2] != None:
+                tmp[0] = node_a.value[0] * node_b.value
+                tmp[1] = node_a.value[1] * node_b.value
+                tmp[2] = node_a.value[2] * node_b.value
                 
+                return Literal(tmp)
+            
+            if node_a.value[0] != None and node_a.value[1] != None:
+                tmp[0] = node_a.value[0] * node_b.value
+                tmp[1] = node_a.value[1] * node_b.value
+                
+                return Literal(tmp)
+            
+            if node_a.value[0] != None:
+                tmp[0] = node_a.value[0] * node_b.value
+                
+                return Literal(tmp)
+        
+        if node_b.type() == "LITERAL":
+            return
+
         return Number(self.visit(node.node_a).value - self.visit(node.node_b).value)
 
     def visit_DivideNode(self, node):
