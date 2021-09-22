@@ -2,61 +2,77 @@ from dataclasses import dataclass
 
 
 @dataclass
-class NumberNode():
+class NumberNode:
     value: float
 
     def __repr__(self):
-        return f"{self.value}"
+        return f'{self.value}'
+
+# literal node
+
 
 @dataclass
-class AlgebricNode():
-    value: str
+class LiteralNode:
+    value: list
 
     def __repr__(self):
-        return f"{self.value}"
+        if self.value[0] == None:
+            return f'{self.value[1]}x'
+        else:
+            return f'({self.value[0]} + {self.value[1]}x)'
+
 
 @dataclass
-class AddNode():
+class AddNode:
     node_a: any
     node_b: any
 
     def __repr__(self):
-        return f"({self.node_a}+{self.node_b})"
+        return f'({self.node_a} + {self.node_b})'
+
 
 @dataclass
-class SubtractNode():
+class SubstractNode:
     node_a: any
     node_b: any
 
     def __repr__(self):
-        return f"({self.node_a}-{self.node_b})"
+        return f'({self.node_a} - {self.node_b})'
+
+# multiply node
+
 
 @dataclass
-class MultiplyNode():
+class MultiplyNode:
     node_a: any
     node_b: any
 
     def __repr__(self):
-        return f"({self.node_a}*{self.node_b})"
+        return f'({self.node_a} * {self.node_b})'
+
+# divide node
+
 
 @dataclass
-class DivideNode():
+class DivideNode:
     node_a: any
     node_b: any
 
     def __repr__(self):
-        return f"({self.node_a}/{self.node_b})"
+        return f'({self.node_a} / {self.node_b})'
+
 
 @dataclass
 class PlusNode:
-    node: any
+    value: float
 
     def __repr__(self):
-        return f"(+{self.node})"
+        return f'(+{self.value})'
+
 
 @dataclass
 class MinusNode:
-    node: any
+    value: float
 
     def __repr__(self):
-        return f"(-{self.node})"
+        return f'(-{self.value})'
