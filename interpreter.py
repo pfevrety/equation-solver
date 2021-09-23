@@ -103,6 +103,7 @@ class Interpreter:
         tmp = [None, None]
 
         if node_a.type() == "LITERAL" and node_b.type() == "LITERAL":
+            raise ValueError("Don't multiply two literal")
             if node_a.value[0] != None and node_a.value[1] != None and node_a.value[2] != None and node_b.value[0] != None and node_b.value[1] != None and node_b.value[2] != None:
                 tmp[0] = node_a.value[0] * node_b.value[0]
                 tmp[1] = node_a.value[1] * node_b.value[0] + node_a.value[0] * \
@@ -127,9 +128,21 @@ class Interpreter:
                 tmp[1] = node_a.value[1] * node_b.value
                 
                 return Literal(tmp)
+
+            if node_a.value[1] != None and node_a.value[2] != None:
+                tmp[0] = node_a.value[1] * node_b.value
+                tmp[1] = node_a.value[2] * node_b.value
+                
+                return Literal(tmp)
             
+
             if node_a.value[0] != None:
                 tmp[0] = node_a.value[0] * node_b.value
+                
+                return Literal(tmp)
+            
+            if node_a.value[1] != None:
+                tmp[1] = node_a.value[1] * node_b.value
                 
                 return Literal(tmp)
         
