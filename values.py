@@ -22,12 +22,13 @@ class Literal:
 
         tmp = []
 
+        print(self.value)
         for i, number in list(enumerate(self.value)):
-            if i == 0:
+            if i == 0 and number != None:
                 tmp.append(str(number))
-            elif i == 1:
+            elif i == 1 and number != None:
                 tmp.append(f'{str(number)}x')
-            else:
+            elif number != None:
                 tmp.append(f'{str(number)}x^{i}')
 
         return ' + '.join(tmp)
