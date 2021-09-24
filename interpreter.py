@@ -61,7 +61,7 @@ class Interpreter:
         node_b = self.visit(node.node_b)
 
         if node_a.type() == "LITERAL" and node_b.type() == "LITERAL":
-            tmp = [None, None]
+            tmp = [None, None, None]
             if node_a.value[0] != None and node_b.value[0] != None:
                 tmp[0] = node_a.value[0] - node_b.value[0]
             elif node_a.value[0] != None:
@@ -74,24 +74,22 @@ class Interpreter:
             return Literal(tmp)
 
         if node_a.type() == "LITERAL":
-            tmp = [None, None]
-            if node_a.value[0] != None:
-                tmp[0] = node_a.value[0] - node_b.value
-            else:
-                tmp[0] = - node_b.value
-            if node_a.value[1] != None:
-                tmp[1] = node_a.value[1]
+            tmp = [None, None, None]
+
+            if node_b.value != None:
+                for number, i in enumerate(node_a.value):
+                    if number != None:
+                        tmp[i] = number * node_b.value
 
             return Literal(tmp)
 
         if node_b.type() == "LITERAL":
-            tmp = [None, None]
-            if node_b.value[0] != None:
-                tmp[0] = node_a.value - node_b.value[0]
-            else:
-                tmp[0] = node_a.value
-            if node_b.value[1] != None:
-                tmp[1] = - node_b.value[1]
+            tmp = [None, None, None]
+
+            if node_a.value != None:
+                for number, i in enumerate(node_b.value):
+                    if number != None:
+                        tmp[i] = number * node_a.value
 
             return Literal(tmp)
 
@@ -116,40 +114,28 @@ class Interpreter:
                 return Literal(tmp)
 
         if node_a.type() == "LITERAL":
-            if node_a.value[0] != None and node_a.value[1] != None and node_a.value[2] != None:
-                tmp[0] = node_a.value[0] * node_b.value
-                tmp[1] = node_a.value[1] * node_b.value
-                tmp[2] = node_a.value[2] * node_b.value
-                
-                return Literal(tmp)
-            
-            if node_a.value[0] != None and node_a.value[1] != None:
-                tmp[0] = node_a.value[0] * node_b.value
-                tmp[1] = node_a.value[1] * node_b.value
-                
+            if node_b.value != None:
+
+                tmp = [None, None, None]
+                if node_a.value != None:
+                    for number, i in enumerate(node_b.value):
+                        if number != None:
+                            tmp[i] = number * node_a.value
+
                 return Literal(tmp)
 
-            if node_a.value[1] != None and node_a.value[2] != None:
-                tmp[0] = node_a.value[1] * node_b.value
-                tmp[1] = node_a.value[2] * node_b.value
-                
-                return Literal(tmp)
-            
-
-            if node_a.value[0] != None:
-                tmp[0] = node_a.value[0] * node_b.value
-                
-                return Literal(tmp)
-            
-            if node_a.value[1] != None:
-                tmp[1] = node_a.value[1] * node_b.value
-                
-                return Literal(tmp)
-        
         if node_b.type() == "LITERAL":
-            return
+            tmp = [None, None, None]
 
-        return Number(self.visit(node.node_a).value - self.visit(node.node_b).value)
+            if node_a.value != None:
+                for number, i in enumerate(node_b.value):
+                    if i != None:
+                        print(i)
+                        tmp[number] = i * node_a.value
+
+            return Literal(tmp)
+
+        return Number(self.visit(node.node_a).value* self.visit(node.node_b).value)
 
     def visit_DivideNode(self, node):
         try:
