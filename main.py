@@ -14,7 +14,6 @@ while True:
     if not tree:
         continue
     interpreter = Interpreter()
-    print(tree)
     print("Prioritées opératoires: " + str(tree))
     print(interpreter.visit(tree))
     # print(f"Resultats:\n\ta: 0,\n\tb: {r[0]},\n\tc: {r[2]}")
