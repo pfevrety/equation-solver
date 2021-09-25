@@ -33,24 +33,33 @@ class Interpreter:
             return Literal(tmp)
 
         if node_a.type() == "LITERAL":
-            tmp = [None, None]
-            if node_a.value[0] != None:
-                tmp[0] = node_a.value[0] + node_b.value
-            else:
-                tmp[0] = node_b.value
-            if node_a.value[1] != None:
-                tmp[1] = node_a.value[1]
+            # tmp = [None, None]
+            # if node_a.value[0] != None:
+            #     tmp[0] = node_a.value[0] + node_b.value
+            # else:
+            #     tmp[0] = node_b.value
+            # if node_a.value[1] != None:
+            #     tmp[1] = node_a.value[1]
+
+            tmp = node_a.value
+
+            if node_b.value != None:
+                if node_a.value[0] != None:
+                    tmp[0] += node_b.value
+                else:
+                    tmp[0] = node_b.value
 
             return Literal(tmp)
 
         if node_b.type() == "LITERAL":
-            tmp = [None, None]
-            if node_b.value[0] != None:
-                tmp[0] = node_a.value + node_b.value[0]
-            else:
-                tmp[0] = node_a.value
-            if node_b.value[1] != None:
-                tmp[1] = node_b.value[1]
+
+            tmp = node_b.value
+
+            if node_a.value != None:
+                if node_b.value[0] != None:
+                    tmp[0] += node_a.value
+                else:
+                    tmp[0] = node_a.value
 
             return Literal(tmp)
 
