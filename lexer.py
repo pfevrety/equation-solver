@@ -39,6 +39,10 @@ class Lexer:
             elif self.current_char == ')':
                 self.advance()
                 yield Token(TokenType.RPAREN)
+            elif self.current_char == '^':
+                self.advance()
+                if self.current_char in DIGITS:
+                    yield Token(TokenType.EXPONENT, int(self.current_char))
             else:
                 raise Exception(f"Illegal character '{self.current_char}'")
 
@@ -59,8 +63,16 @@ class Lexer:
 
             if self.current_char == 'x':
                 self.advance()
-                if self.current_char != None and (self.current_char == '.' or self.current_char == 'x' or self.current_char in DIGITS):
+                if self.current_char != None and (self.current_char == '.' or self.current_char == 'x' or self.current_char == 'x' or self.current_char == '^' in DIGITS):
                     raise Exception(f"Illegal character '{number_str}x{self.current_char}'")
+                if self.current_char == '^':
+                    self.advance()
+                    if self.current_char == '2':
+                        self.advance()
+                        if self.current_char in DIGITS:
+                            raise Exception(f"Illegal character '{number_str}x2{self.current_char}'")
+                        print(number_str)
+                        return Token(TokenType.LITERAL, [None, None, float(number_str)])
                 return Token(TokenType.LITERAL, [None, float(number_str)])
 
             number_str += self.current_char
