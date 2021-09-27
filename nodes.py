@@ -76,3 +76,10 @@ class MinusNode:
 
     def __repr__(self):
         return f'(-{self.value})'
+
+@dataclass
+class ExponentNode:
+    node_a: any
+
+    def __repr__(self):
+        return f'({self.node_a}*{self.node_a})'
