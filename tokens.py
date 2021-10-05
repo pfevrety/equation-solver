@@ -9,6 +9,7 @@ class TokenType(Enum):
     LPAREN = 5
     RPAREN = 6
     LITERAL = 7
+    EXPONENT = 8
 
 
 @dataclass

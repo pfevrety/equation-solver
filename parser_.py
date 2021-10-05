@@ -21,6 +21,8 @@ class Parser:
             return None
 
         result = self.expr()
+        
+        print(result)
 
         if self.current_token != None:
             self.raise_error()
@@ -42,7 +44,7 @@ class Parser:
 
     def term(self):
         result = self.factor()
-
+        
         while self.current_token != None and self.current_token.type in (TokenType.MULTIPLY, TokenType.DIVIDE):
             if self.current_token.type == TokenType.MULTIPLY:
                 self.advance()
