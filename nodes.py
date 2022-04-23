@@ -3,23 +3,37 @@ from dataclasses import dataclass
 
 @dataclass
 class NumberNode:
-    value: float
+    value: dict
+
+    # def __repr__(self):
+    #     if self.value['variables'] is None:
+    #         return f"{self.value['constant']}"
+    #     elif self.value['constant'] == 0:
+    #         result = ""
+    #         for i in self.value['variables']:
+    #             print(i['coef'])
+    #             result += str(i['coef']) if i['coef'] != 0 else ''
+    #             for x in i["name"]:
+    #                 result += f'{x}^' + str(i['variable'][x]) if i['variable'][x] != 1 else x
+    #         return result
+    #     else:
+    #         result = str(self.value['constant']) + ' '
+    #         for i in self.value['variables']:
+    #             result += str(i['coef']) if i['coef'] != 1 else ''
+    #             for x in i["name"]:
+    #                 result += f'{x}^' + str(i['variable'][x]) if i['variable'][x] != 1 else x
+    #         return result
 
     def __repr__(self):
-        return f'{self.value}'
+        if self.value['variables'] is None:
+            return f"{self.value['constant']}"
+        result = str(self.value['constant']) + ' + ' if self.value['constant'] != 0.0 else ''
+        for index, variable in enumerate(self.value['variables']):
+            result += ' + ' + str(variable['coef']) if (variable['coef'] != 1) else ''
+            for x in variable["name"]:
+                result += f'{x}^' + str(variable['variable'][x]) + '+' if variable['variable'][x] != 1 else x + '+' if index < len(self.value['variables']) - 1 else x
+        return result
 
-# literal node
-
-
-@dataclass
-class LiteralNode:
-    value: list
-
-    def __repr__(self):
-        if self.value[0] == None:
-            return f'{self.value[1]}x'
-        else:
-            return f'({self.value[0]} + {self.value[1]}x)'
 
 
 @dataclass
@@ -28,18 +42,16 @@ class AddNode:
     node_b: any
 
     def __repr__(self):
-        return f'({self.node_a} + {self.node_b})'
+        return f"({self.node_a}+{self.node_b})"
 
 
 @dataclass
-class SubstractNode:
+class SubtractNode:
     node_a: any
     node_b: any
 
     def __repr__(self):
-        return f'({self.node_a} - {self.node_b})'
-
-# multiply node
+        return f"({self.node_a}-{self.node_b})"
 
 
 @dataclass
@@ -48,9 +60,7 @@ class MultiplyNode:
     node_b: any
 
     def __repr__(self):
-        return f'({self.node_a} * {self.node_b})'
-
-# divide node
+        return f"({self.node_a}*{self.node_b})"
 
 
 @dataclass
@@ -59,27 +69,20 @@ class DivideNode:
     node_b: any
 
     def __repr__(self):
-        return f'({self.node_a} / {self.node_b})'
+        return f"({self.node_a}/{self.node_b})"
 
 
 @dataclass
 class PlusNode:
-    value: float
+    node: any
 
     def __repr__(self):
-        return f'(+{self.value})'
+        return f"(+{self.node})"
 
 
 @dataclass
 class MinusNode:
-    value: float
+    node: any
 
     def __repr__(self):
-        return f'(-{self.value})'
-
-@dataclass
-class ExponentNode:
-    node_a: any
-
-    def __repr__(self):
-        return f'({self.node_a}*{self.node_a})'
+        return f"(-{self.node})"
