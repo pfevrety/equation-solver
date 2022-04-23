@@ -1,37 +1,15 @@
 from dataclasses import dataclass
-
-
 @dataclass
 class Number:
-    value: float
+    value: dict
 
     def __repr__(self):
-        return f"{self.value}"
-
-    def type(self):
-        return "NUMBER"
-
-# create literal class
-
-
-@dataclass
-class Literal:
-    value: list
-
-    def __repr__(self):
-
-        tmp = []
-
-        print(self.value)
-        for i, number in list(enumerate(self.value)):
-            if i == 0 and number != None:
-                tmp.append(str(number))
-            elif i == 1 and number != None:
-                tmp.append(f'{str(number)}x')
-            elif number != None:
-                tmp.append(f'{str(number)}x^{i}')
-
-        return ' + '.join(tmp)
-
-    def type(self):
-        return "LITERAL"
+        if self.value['variables'] is None:
+            return f"{self.value['constant']}"
+        result = str(self.value['constant']) if self.value['constant'] != 0.0 else ''
+        for variable in self.value['variables']:
+            if variable['coef'] != 0:
+                result += ' + ' + str(variable['coef']) if (variable['coef'] >= 0) else ' - ' + str(variable['coef']*-1)
+                for x in variable["name"]:
+                    result += f'{x}^' + str(variable['variable'][x]) if variable['variable'][x] != 1 else x
+        return result
