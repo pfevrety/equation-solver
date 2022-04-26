@@ -71,7 +71,7 @@ class Lexer:
 			if self.current_char in WHITESPACE:
 				self.advance()
 			elif self.current_char in constant:
-				token = Token(TokenType.NUMBER, {'constant': special_numbers[self.current_char], 'variables': None})
+				token = Token(TokenType.NUMBER, {'constant': special_numbers[self.current_char], 'variables': []})
 
 				self.advance()
 				yield token
@@ -120,4 +120,4 @@ class Lexer:
 			number_str = '0' + number_str
 		if number_str.endswith('.'):
 			number_str += '0'
-		return Token(TokenType.NUMBER, {'constant': float(number_str), 'variables': None})
+		return Token(TokenType.NUMBER, {'constant': float(number_str), 'variables': []})
