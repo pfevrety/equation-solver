@@ -1,5 +1,7 @@
+from ast import operator
 from values import Number
 
+from operation import conversion, addition, substraction
 
 def apply_minus(node):
     if node['variables'] is None:
@@ -15,16 +17,21 @@ class Interpreter:
         pass
 
     def visit(self, node):
-        method_name = f'visit_{type(node).__name__}'
-        method = getattr(self, method_name)
-        return method(node)
+        if type(node).__name__  == "NumberNode":
+            return Number(node.value)
 
-    def visit_NumberNode(self, node):
-        return Number(node.value)
+        else:   
+            node_a = self.visit(node.node_a).value
+            node_b = self.visit(node.node_b).value
+
+            return eval(f"{conversion.conversion[type(node).__name__]}.linear(node_a, node_b)")
+
 
     def visit_AddNode(self, node):
+        
         node_a = self.visit(node.node_a).value
         node_b = self.visit(node.node_b).value
+        
         commun, type = self.get_commun(node_a, node_b)
         if type == 0:
             return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': None})
@@ -70,18 +77,12 @@ class Interpreter:
         node_a = self.visit(node.node_a).value
         node_b = apply_minus(self.visit(node.node_b).value)
         commun, type = self.get_commun(node_a, node_b, False)
-        print(type)
         if type == 0:
             return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': None})
         elif type == 1:
-            print(node_a, node_b)
-            print(node_a['variables'], node_b['constant'])
-            print({'constant': node_a['constant'] * node_b['constant'], 'variables': self.multiply(node_a['variables'], node_b['constant'])})
             return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': node_a['variables']})
         elif type == 2:
             return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': node_b['variables']})
-
-        print(commun)
 
 
         return Number(self.visit(node.node_a).value * self.visit(node.node_b).value)
@@ -95,7 +96,6 @@ class Interpreter:
     def multiply(self, var, factor):
         tmp = []
         for i in var:
-            print("a",var['coef'], factor)
             tmp.append({'name': var['name'], 'coef': var['coef'] * factor, 'variable': var['variable']})
         return tmp
     def is_the_same(self, var1, var2, tx):
