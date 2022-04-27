@@ -12,6 +12,8 @@ def format_and_verify_expression(expression):
 	parens_counter = 0
 	operator = ("+", '-', '*', '/')
 	expression_l = list(expression.replace(' ',''))
+	if expression_l[0] == '-':
+		expression_l.insert(0, '0')
 	expression_length = len(expression_l)
 
 	while counter < expression_length:
