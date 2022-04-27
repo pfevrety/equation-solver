@@ -1,1 +1,1 @@
-conversion = {"AddNode": "addition", "SubstractNode": "substract","NumberNode": "number"}
+conversion = {"AddNode": "addition", "SubtractNode": "substraction","NumberNode": "number"}
