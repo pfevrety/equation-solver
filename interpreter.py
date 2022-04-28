@@ -1,7 +1,7 @@
 from ast import operator
 from values import Number
 
-from operation import conversion, addition, substraction
+from operation import conversion, addition, substraction, multiplication
 
 def apply_minus(node):
     if node['variables'] is None:
