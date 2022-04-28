@@ -14,13 +14,13 @@ def apply_minus(node):
 
 class Interpreter:
     def __init__(self):
-        pass
+        self.counter = True
 
     def visit(self, node):
         if type(node).__name__  == "NumberNode":
             return Number(node.value)
 
-        else:   
+        elif self.counter:   
             node_a = self.visit(node.node_a).value
             node_b = self.visit(node.node_b).value
 
