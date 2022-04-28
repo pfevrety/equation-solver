@@ -12,11 +12,16 @@ def linear(node_a, node_b):
         variable_testing = variables[0]
         tmp = [variable_testing]
         equal = False
-        for i in range(1, len(variables)):
-            if is_the_same(variables[i], variable_testing):
-                tmp.append(variables[i])
-                variables.pop(i)
-                equal = True
+        counter = 1
+        max1 = len(variables)
+        while counter < max1:
+            if len(variables) > 0:
+                if is_the_same(variables[counter], variable_testing):
+                    tmp.append(variables[counter])
+                    variables.pop(counter)
+                    max1 -= 1
+                    equal = True
+                counter += 1
         if not equal:
             _commun_variables.append(variable_testing)
         else:
@@ -25,7 +30,10 @@ def linear(node_a, node_b):
         
     tmp = {'constant': node_a['constant'] + node_b['constant'], 'variables': []}
     for i in commun_variables:
-        tmp['variables'].append({'name': get_name(i[0]['variable']), 'coef': i[0]['coef'] + i[1]['coef'],'variable': i[0]['variable']})
+        txx = {'name': get_name(i[0]['variable']), 'coef': 0,'variable': i[0]['variable']}
+        for y in i:
+            txx['coef'] += float(y['coef'])
+        tmp['variables'].append(txx)
     for i in _commun_variables:
         tmp['variables'].append(i)
 
