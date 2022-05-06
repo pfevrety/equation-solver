@@ -2,7 +2,7 @@ from lexer import Lexer
 from parser_ import Parser
 from interpreter import Interpreter
 
-text = "0+"+" (1-x)(1-x)(1-x)" + "+0" #input("calc > ")
+text = "0+"+" (x+y)^2" + "+0" #input("calc > ")
 lexer = Lexer(text)
 tokens = tuple(lexer.generate_tokens)
 #print("tokens", tokens)  # Done
@@ -52,4 +52,3 @@ def test():
     print(f"Test passed: {test_passed}, Test failed: {test_failed}")
 
 
-test()
