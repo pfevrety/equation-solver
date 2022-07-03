@@ -4,7 +4,6 @@ from dataclasses import dataclass
 @dataclass
 class NumberNode:
     value: dict
-
     # def __repr__(self):
     #     if self.value['variables'] is None:
     #         return f"{self.value['constant']}"
