@@ -1,9 +1,9 @@
 from operation.utils.get_name import get_name
 from operation.utils.is_the_same import is_the_same
 
-from values import Number
+from values import Number, Variables
 def linear(node_a, node_b):
-    variables = [variable for variable in node_a['variables']] + [variable for variable in node_b['variables']]
+    variables = [variable for variable in node_a.variables] + [variable for variable in node_b.variables]
 
     commun_variables = []
     _commun_variables = []
@@ -27,17 +27,20 @@ def linear(node_a, node_b):
         else:
             commun_variables.append(tmp)
         variables.pop(0)
-        
-    tmp = {'constant': node_a['constant'] + node_b['constant'], 'variables': []}
-    for i in commun_variables:
-        txx = {'name': get_name(i[0]['variable']), 'coef': 0,'variable': i[0]['variable']}
-        for y in i:
-            txx['coef'] += float(y['coef'])
-        tmp['variables'].append(txx)
-    for i in _commun_variables:
-        tmp['variables'].append(i)
 
-    return Number(tmp)
+    var = []
+    for i in commun_variables:
+        coef = 0 
+        for y in i:
+            coef += float(y.coef)
+        var.append(Variables(coef, i[0].variables))
+
+    for i in _commun_variables:
+        var.append(Variables(i.coef, i.variables))
+
+    if var is None:
+        var = []
+    return Number(node_a.constant + node_b.constant, var)
 
 
 def derivate(node_a, node_b):
