@@ -1,5 +1,5 @@
 from ast import operator
-from values import Number
+from values import Number, Variables
 
 from operation import conversion, addition, substraction, multiplication
 
@@ -18,11 +18,14 @@ class Interpreter:
 
     def visit(self, node):
         if type(node).__name__  == "NumberNode":
-            return Number(node.value)
+            var = []
+            for i in node.value['variables']:
+                var.append(Variables(i['coef'], i['variable']))
+            return Number(node.value['constant'], var)
 
         elif self.counter:   
-            node_a = self.visit(node.node_a).value
-            node_b = self.visit(node.node_b).value
+            node_a = self.visit(node.node_a)
+            node_b = self.visit(node.node_b)
 
             return eval(f"{conversion.conversion[type(node).__name__]}.linear(node_a, node_b)")
 
