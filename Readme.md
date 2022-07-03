@@ -1,6 +1,6 @@
 # Equation solver
 
-Simple literal expression reduicer and rederer.
+Simple literal expression reducer and renderer.
 ![](./img/render.png)
 ## Description
 
