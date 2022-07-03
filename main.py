@@ -5,6 +5,7 @@ from interpreter import Interpreter
 
 
 text = "+2x+5x +2+ x+xxx - 29 + 3t" #input("calc > ")
+print("Expression: " + text[1:])
 lexer = Lexer(text[1:])
 tokens = tuple(lexer.generate_tokens)
 #print("tokens", tokens)  # Done
