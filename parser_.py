@@ -20,7 +20,6 @@ class Parser:
 		if self.current_token is None:
 			return None
 
-
 		result = self.expr()
 
 		if self.current_token is not None:
