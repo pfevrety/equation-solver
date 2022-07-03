@@ -2,18 +2,21 @@ from lexer import Lexer
 from parser_ import Parser
 from interpreter import Interpreter
 
-text = "0+"+" (x+y)^2" + "+0" #input("calc > ")
-lexer = Lexer(text)
+
+
+text = "+2x+5x +2+ x+xxx" #input("calc > ")
+lexer = Lexer(text[1:])
 tokens = tuple(lexer.generate_tokens)
 #print("tokens", tokens)  # Done
 parser = Parser(tokens)
 tree = parser.parse()
-#print("tree", tree)
+print("tree", tree)
 interpreter = Interpreter()
 value2 = interpreter.visit(tree)
 print(value2)
-print(value2.generate_latex())
-    
+value2.render()
+
+
 def tout_faire(text):
     lexer = Lexer(text)
     tokens = tuple(lexer.generate_tokens)
@@ -21,6 +24,7 @@ def tout_faire(text):
     tree = parser.parse()
     interpreter = Interpreter()
     return interpreter.visit(tree)
+
 
 
 def test():
