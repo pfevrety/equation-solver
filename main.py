@@ -10,10 +10,10 @@ tokens = tuple(lexer.generate_tokens)
 #print("tokens", tokens)  # Done
 parser = Parser(tokens)
 tree = parser.parse()
-print("tree", tree)
+print("Tree:", tree)
 interpreter = Interpreter()
 value2 = interpreter.visit(tree)
-print(value2)
+print("Result: " +str(value2))
 value2.render()
 
 
