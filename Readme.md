@@ -1,7 +1,7 @@
 # Equation solver
 
 Simple literal expression reducer and renderer.
-![](./img/render.png)
+![](./img/screen.png)
 ## Description
 
 Work with addition, substraction and multiplication.
