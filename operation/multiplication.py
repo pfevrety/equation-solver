@@ -1,34 +1,32 @@
-from values import Number
+from values import Number, Variables
 
 
 def linear(node_a, node_b):
-    tmp = {'constant': node_a['constant'] * node_b['constant'], 'variables': []}
-    
-
+    var = []
     # Multiplie tout par la constante a
-    for variable_b in node_b['variables']:
-        if variable_b['coef'] * node_a['constant'] != 0:
-            tmp['variables'].append({'name': variable_b['name'], 'coef': variable_b['coef'] * node_a['constant'], 'variable': variable_b['variable']})
-
+    for variable_b in node_b.variables:
+        if variable_b.coef * node_a.constant != 0:
+            var.append(Variables(variable_b.coef * node_a.constant, variable_b.variables))
     
-    for variable_a in node_a['variables']:
+    for variable_a in node_a.variables:
         
-        if variable_a['coef'] * node_b['constant'] != 0:
-            tmp['variables'].append({'name': variable_a['name'], 'coef': variable_a['coef'] * node_b['constant'], 'variable': variable_a['variable']})
-        for variable_b in node_b['variables']:
-            tmp1 = {'name': '', 'coef': variable_a['coef'] * variable_b['coef'], 'variable': variable_b['variable'].copy()}
-            var_b = variable_b['variable'].keys()
-            for var in variable_a['variable'].keys():
+        if variable_a.coef * node_b.constant != 0:
+            var.append(Variables(variable_b.coef * node_a.constant, variable_a.variables))
 
-                if var in var_b:
-                    tmp1['variable'][var] += variable_a['variable'][var]
+        for variable_b in node_b.variables:
+            print(variable_b.__dict__)
+            tmp_var = variable_b.variables.copy()
+            var_b = variable_b.variables.keys()
+            for vari in variable_a.variables.keys():
+
+                if vari in var_b:
+                    tmp_var[vari] += variable_a.variables[vari]
                 else:
-                    tmp1['variable'][var] = variable_a['variable'][var]
+                    tmp_var[vari] = variable_a.variables[vari]
 
-            tmp1['name'] = ''.join(tmp1['variable'].keys())
-            tmp['variables'].append(tmp1)
-
+            var.append(Variables(variable_a.coef * variable_b.coef, tmp_var))
 
 
-    return Number(tmp)
+
+    return Number(node_a.constant * node_b.constant, var)
 
