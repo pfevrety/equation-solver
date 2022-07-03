@@ -14,7 +14,6 @@ def linear(node_a, node_b):
             var.append(Variables(variable_b.coef * node_a.constant, variable_a.variables))
 
         for variable_b in node_b.variables:
-            print(variable_b.__dict__)
             tmp_var = variable_b.variables.copy()
             var_b = variable_b.variables.keys()
             for vari in variable_a.variables.keys():
