@@ -1,2 +1,1 @@
-selenium
-dotenv
+# Aucune dépendance externe requise.

@@ -1,59 +1,60 @@
+"""Command-line entry point for the expression simplifier."""
+
+import argparse
+
+from interpreter import Interpreter
 from lexer import Lexer
 from parser_ import Parser
-from interpreter import Interpreter
+from derivation import derive
 
 
-
-text = "+2x+5x +2+ x+xxx - 29 + 3t" #input("calc > ")
-print("Expression: " + text[1:])
-lexer = Lexer(text[1:])
-tokens = tuple(lexer.generate_tokens)
-#print("tokens", tokens)  # Done
-parser = Parser(tokens)
-tree = parser.parse()
-print("Tree:", tree)
-interpreter = Interpreter()
-value2 = interpreter.visit(tree)
-print("Result: " +str(value2))
-value2.render()
+def parse(expression):
+    tokens = tuple(Lexer(expression).generate_tokens)
+    tree = Parser(tokens).parse()
+    if tree is None:
+        raise ValueError("Expression cannot be empty")
+    return tree
 
 
-def tout_faire(text):
-    lexer = Lexer(text)
-    tokens = tuple(lexer.generate_tokens)
-    parser = Parser(tokens)
-    tree = parser.parse()
-    interpreter = Interpreter()
-    return interpreter.visit(tree)
+def simplify(expression, variable=None, steps=None):
+    """Parse and simplify an expression, optionally differentiating it."""
+    tree = parse(expression)
+    if variable:
+        if len(variable) != 1 or not variable.isalpha():
+            raise ValueError("The differentiation variable must be one letter")
+        tree = derive(tree, variable)
+    return Interpreter(steps).visit(tree)
 
 
-
-def test():
-    tests = {
-        '1 + (2 + 3)': '6',
-        '(1 + 2 + 3) + 9.2': '15.2',
-        '(1.1+2) + (2 + 3)': '8.1',
-        '(1.1+x) + t + (2 + x + 3)': '6.1 + 2.0x + t',
-        '(x+2) + (2 + 3) + v': '7 + x + v',
-        '- 9.02 - x + 1.1 - x + x + x + x + y - t + x + o -o + x - x - x- x - x': '-7.92 - x + y - t',
-        "-(x -(2)) + 2 - (t)": '4 - x - t',
-        '2 * x * 1 * 2': '4.0x',
-        "12 + xxxxy*(y + x + z) + 2 * y - x": "12 + y^2x^4 + x^5y + zyx^4 + 2.0y - x"
-    }
-
-    test_passed = 0
-    test_failed = 0
-    counter = 0
-    for test in tests.keys():
-        if str(tout_faire(test)) == tests[test]:
-            test_passed += 1
+def main():
+    parser = argparse.ArgumentParser(description="Simplify arithmetic and polynomial expressions.")
+    parser.add_argument("expression", nargs="?", help='Expression, for example: "2x + 3x - 4"')
+    parser.add_argument("--derive", metavar="VARIABLE", help="Differentiate with respect to a variable, e.g. --derive x")
+    parser.add_argument("--steps", action="store_true", help="Print intermediate simplification steps")
+    args = parser.parse_args()
+    expression = args.expression
+    if expression is None:
+        try:
+            expression = input("expression> ")
+        except EOFError:
+            return 0
+    try:
+        steps = [] if args.steps else None
+        result = simplify(expression, args.derive, steps)
+        if args.derive:
+            print(f"d/d{args.derive} ({expression}) = {result}")
         else:
-            test_failed += 1
-            print(f"{tests[test]} == {str(tout_faire(test))}")
-        counter += 1
+            print(result)
+        if args.steps:
+            print("Steps:")
+            for step in steps:
+                print(f"  {step}")
+    except (ValueError, ZeroDivisionError) as error:
+        parser.error(str(error))
+    except Exception as error:
+        parser.error(f"Invalid expression: {error}")
+    return 0
 
-    
-            
-    print(f"Test passed: {test_passed}, Test failed: {test_failed}")
 
-
+if __name__ == "__main__":
+    raise SystemExit(main())

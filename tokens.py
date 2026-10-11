@@ -9,6 +9,7 @@ class TokenType(Enum):
 	DIVIDE    = 4
 	LPAREN    = 5
 	RPAREN    = 6
+	FUNCTION  = 7
 
 @dataclass
 class Token:

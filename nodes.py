@@ -85,3 +85,12 @@ class MinusNode:
 
     def __repr__(self):
         return f"(-{self.node})"
+
+
+@dataclass
+class FunctionNode:
+	name: str
+	argument: any
+
+	def __repr__(self):
+		return f"{self.name}({self.argument})"

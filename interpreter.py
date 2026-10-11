@@ -1,140 +1,64 @@
-from ast import operator
+import math
+
 from values import Number, Variables
-
-from operation import conversion, addition, substraction, multiplication
-
-def apply_minus(node):
-    if node['variables'] is None:
-        return {'constant': -node['constant'], 'variables': None}
-    tmp = {'constant': -node['constant'], 'variables': []}
-    for i in node['variables']:
-        tmp['variables'].append({'name': i['name'], 'coef': -i['coef'], 'variable': i['variable']})
-    return tmp
+from operation import addition, substraction, multiplication
 
 
 class Interpreter:
-    def __init__(self):
-        self.counter = True
+    def __init__(self, steps=None):
+        self.steps = steps if steps is not None else []
 
     def visit(self, node):
-        if type(node).__name__  == "NumberNode":
-            var = []
-            for i in node.value['variables']:
-                var.append(Variables(i['coef'], i['variable']))
-            return Number(node.value['constant'], var)
+        name = type(node).__name__
+        if name == "NumberNode":
+            variables = [Variables(item['coef'], item['variable']) for item in node.value['variables'] or []]
+            return Number(node.value['constant'], variables)
+        if name == "PlusNode":
+            return self.visit(node.node)
+        if name == "MinusNode":
+            value = self.visit(node.node)
+            return Number(-value.constant, [Variables(-v.coef, v.variables) for v in value.variables])
+        if name == "FunctionNode":
+            argument = self.visit(node.argument)
+            if argument.variables:
+                atom = f"@{node.name}({argument})"
+                return Number(0, [Variables(1, {atom: 1})])
+            functions = {"sin": math.sin, "cos": math.cos, "tan": math.tan,
+                         "sqrt": math.sqrt, "log": math.log, "ln": math.log,
+                         "exp": math.exp, "abs": abs}
+            return Number(functions[node.name](argument.constant), [])
 
-        elif self.counter:   
-            node_a = self.visit(node.node_a)
-            node_b = self.visit(node.node_b)
-
-            return eval(f"{conversion.conversion[type(node).__name__]}.linear(node_a, node_b)")
-
-
-    def visit_AddNode(self, node):
-        
-        node_a = self.visit(node.node_a).value
-        node_b = self.visit(node.node_b).value
-        
-        commun, type = self.get_commun(node_a, node_b)
-        if type == 0:
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': None})
-        elif type == 1:
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': node_a['variables']})
-        elif type == 2:
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': node_b['variables']})
+        left, right = self.visit(node.node_a), self.visit(node.node_b)
+        if name == "AddNode":
+            result = addition.linear(left, right)
+        elif name == "SubtractNode":
+            result = substraction.linear(left, right)
+        elif name == "MultiplyNode":
+            result = multiplication.linear(left, right)
+        elif name == "DivideNode":
+            result = self._divide(left, right)
         else:
-            tmp = {'constant': node_a['constant'] + node_b['constant'], 'variables': []}
-            for c in commun[0]:
-                tmp['variables'].append({'name': self.get_name(c[0]['variable']), 'coef': c[0]['coef'] + c[1]['coef'],
-                                         'variable': c[0]['variable']})
+            raise TypeError(f"Unsupported syntax node: {name}")
+        self.steps.append(f"{node} = {result}")
+        return result
 
-            for nn in commun[1]:
-                tmp['variables'].append(nn)
-
-            return Number(tmp)
-
-    def visit_SubtractNode(self, node):
-        node_a = self.visit(node.node_a).value
-        node_b = apply_minus(self.visit(node.node_b).value)
-        commun, type = self.get_commun(node_a, node_b)
-
-        if type == 0:
-
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': None})
-        elif type == 1:
-
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': node_a['variables']})
-        elif type == 2:
-            return Number({'constant': node_a['constant'] + node_b['constant'], 'variables': node_b['variables']})
-        else:
-            tmp = {'constant': node_a['constant'] + node_b['constant'], 'variables': []}
-            for c in commun[0]:
-                tmp['variables'].append({'name': self.get_name(c[0]['variable']), 'coef': c[0]['coef'] + c[1]['coef'],
-                                         'variable': c[0]['variable']})
-
-            for nn in commun[1]:
-                tmp['variables'].append(nn)
-            return Number(tmp)
-
-    def visit_MultiplyNode(self, node):
-        node_a = self.visit(node.node_a).value
-        node_b = apply_minus(self.visit(node.node_b).value)
-        commun, type = self.get_commun(node_a, node_b, False)
-        if type == 0:
-            return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': None})
-        elif type == 1:
-            return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': node_a['variables']})
-        elif type == 2:
-            return Number({'constant': node_a['constant'] * node_b['constant'], 'variables': node_b['variables']})
-
-
-        return Number(self.visit(node.node_a).value * self.visit(node.node_b).value)
-
-    def visit_DivideNode(self, node):
-        try:
-            return Number(self.visit(node.node_a).value / self.visit(node.node_b).value)
-        except:
-            raise Exception("Runtime math error")
-
-    def multiply(self, var, factor):
-        tmp = []
-        for i in var:
-            tmp.append({'name': var['name'], 'coef': var['coef'] * factor, 'variable': var['variable']})
-        return tmp
-    def is_the_same(self, var1, var2, tx):
-        if var1['name'] == var2['name']:
-            if not tx:
-                return True
-            for var in var1['variable'].keys():
-                if var1['variable'][var] != var2['variable'][var]:
-                    return False
-            return True
-        else:
-            return False
-
-    def get_name(self, var):
-        return ''.join(var.keys())
-
-    def get_commun(self, node_a, node_b, tx=True):
-        if node_a['variables'] is None and node_b['variables'] is None:
-            return None, 0
-        elif node_a['variables'] is not None and node_b['variables'] is None:
-            return None, 1
-        elif node_a['variables'] is None and node_b['variables'] is not None:
-            return None, 2
-
-        var_1 = [variable for variable in node_a['variables']]
-        var_2 = [variable for variable in node_b['variables']]
-        same = []
-        not_same = []
-        for v in var_1:
-            is_equal = False
-            for index, c in enumerate(var_2):
-                if self.is_the_same(v, c, tx):
-                    same.append((v, c))
-                    var_2.pop(index)
-                    is_equal = True
-            if not is_equal:
-                not_same.append(v)
-
-        return (same, not_same + var_2), 3
+    @staticmethod
+    def _divide(left, right):
+        if right.constant == 0 and not right.variables:
+            raise ValueError("Division by zero")
+        if not right.variables:
+            return Number(left.constant / right.constant,
+                          [Variables(v.coef / right.constant, v.variables) for v in left.variables])
+        if right.constant or len(right.variables) != 1:
+            raise ValueError("Division is supported only by a non-zero constant or a single monomial")
+        divisor = right.variables[0]
+        terms = []
+        if left.constant:
+            terms.append(Variables(left.constant / divisor.coef,
+                                   {name: -power for name, power in divisor.variables.items()}))
+        for term in left.variables:
+            powers = term.variables.copy()
+            for name, power in divisor.variables.items():
+                powers[name] = powers.get(name, 0) - power
+            terms.append(Variables(term.coef / divisor.coef, powers))
+        return Number(0, terms)

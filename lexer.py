@@ -5,6 +5,7 @@ WHITESPACE = ' \n\t'
 DIGITS = '0123456789'
 special_numbers = {"π": pi, "e": e}
 constant = tuple(special_numbers.keys())
+FUNCTIONS = {"sin", "cos", "tan", "sqrt", "log", "ln", "exp", "abs"}
 
 
 def format_and_verify_expression(expression):
@@ -12,17 +13,31 @@ def format_and_verify_expression(expression):
 	parens_counter = 0
 	operator = ("+", '-', '*', '/')
 	expression_l = list(expression.replace(' ',''))
+	if not expression_l:
+		return expression_l
 	if expression_l[0] == '-':
 		expression_l.insert(0, '0')
 	expression_length = len(expression_l)
 
 	while counter < expression_length:
+		if expression_l[counter].isalpha():
+			function = next((name for name in FUNCTIONS
+				if expression_l[counter:counter + len(name)] == list(name)
+				and counter + len(name) < expression_length
+				and expression_l[counter + len(name)] == '('), None)
+			if function:
+				counter += len(function)
+				continue
 		if expression_l[counter] == '(':
 			parens_counter += 1
 			if counter < expression_length - 1 and expression_l[counter + 1] == ')':
 				raise Exception("Invalid expression")
 
-			if counter > 0 and (expression_l[counter - 1].isdigit() or expression_l[counter - 1].isalpha()):
+			is_function_call = any(
+				counter >= len(name) and expression_l[counter - len(name):counter] == list(name)
+				for name in FUNCTIONS
+			)
+			if counter > 0 and not is_function_call and (expression_l[counter - 1].isdigit() or expression_l[counter - 1].isalpha()):
 				expression_l.insert(counter, '*')
 				expression_length += 1
 				counter += 1
@@ -80,9 +95,19 @@ class Lexer:
 			elif self.current_char == '.' or self.current_char in DIGITS:
 				yield self.generate_number()
 			elif self.current_char.isalpha():
-				token = Token(TokenType.NUMBER, {'constant': 0.0, 'variables': [{'name': self.current_char, 'coef': 1, 'variable': {self.current_char: 1}}]})
+				word = self.current_char
 				self.advance()
-				yield token
+				while self.current_char is not None and self.current_char.isalpha():
+					word += self.current_char
+					self.advance()
+				if word in FUNCTIONS:
+					yield Token(TokenType.FUNCTION, word)
+					continue
+				if word == 'e':
+					yield Token(TokenType.NUMBER, {'constant': special_numbers['e'], 'variables': []})
+					continue
+				for char in word:
+					yield Token(TokenType.NUMBER, {'constant': 0.0, 'variables': [{'name': char, 'coef': 1, 'variable': {char: 1}}]})
 			elif self.current_char == '+':
 				self.advance()
 				yield Token(TokenType.PLUS)

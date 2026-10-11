@@ -76,5 +76,16 @@ class Parser:
 		elif token.type == TokenType.MINUS:
 			self.advance()
 			return MinusNode(self.factor())
+		elif token.type == TokenType.FUNCTION:
+			name = token.value
+			self.advance()
+			if self.current_token is None or self.current_token.type != TokenType.LPAREN:
+				self.raise_error()
+			self.advance()
+			argument = self.expr()
+			if self.current_token is None or self.current_token.type != TokenType.RPAREN:
+				self.raise_error()
+			self.advance()
+			return FunctionNode(name, argument)
 		
 		self.raise_error()
